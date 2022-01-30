@@ -1,8 +1,35 @@
-import "./style.css";
+const sudokuTable = document.getElementsByClassName(
+  "sudoku-board"
+)[0] as HTMLTableElement;
 
-const app = document.querySelector<HTMLDivElement>("#app")!;
+const cellInputs = sudokuTable.getElementsByTagName("input");
 
-app.innerHTML = `
-  <h1>Hello Vite!</h1>
-  <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
-`;
+function onInputKeyDown(e: KeyboardEvent) {
+  const { key } = e;
+
+  const input = e.target as HTMLInputElement;
+
+  if (key === "Backspace" || key === "Delete" || key === " ") {
+    e.preventDefault();
+    input.value = "";
+    return;
+  }
+
+  const num = Number(key);
+
+  if (isNaN(num) || num <= 0) {
+    e.preventDefault();
+    return;
+  }
+
+  if (num > 0 && num < 10) {
+    e.preventDefault();
+    input.value = key;
+  }
+}
+
+for (let i = 0; i < cellInputs.length; i++) {
+  const input = cellInputs[i];
+
+  input.addEventListener("keydown", onInputKeyDown);
+}

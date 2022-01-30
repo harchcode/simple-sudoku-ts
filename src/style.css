@@ -1,8 +1,51 @@
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  @apply bg-white text-black font-sans;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+table.sudoku-board {
+  @apply table-fixed border-2 xs:border-4 border-black relative;
+}
+
+table.sudoku-board tbody {
+  @apply relative;
+}
+
+table.sudoku-board tbody tr td {
+  @apply border border-black relative;
+  width: calc(100% / 9);
+  padding-top: calc(100% / 9);
+}
+
+table.sudoku-board tbody tr:nth-child(3n) {
+  @apply border-b-2 xs:border-b-4 border-black;
+}
+
+table.sudoku-board tbody tr td:nth-child(3n) {
+  @apply border-r-2 xs:border-r-4 border-black;
+}
+
+table.sudoku-board tbody tr td input {
+  @apply absolute top-0 left-0 bottom-0 right-0 text-center text-2xl xs:text-4xl text-gray-800 bg-transparent;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  caret-color: transparent;
+}
+
+table.sudoku-board tbody tr td input.given {
+  @apply text-black font-bold;
+}
+
+table.sudoku-board tbody tr td input:focus {
+  @apply outline-0 border-2 border-blue-600;
 }
