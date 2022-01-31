@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Simple 3x3 Sudoku generator and solver using Typescript."
+    />
     <title>Sudoku</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
+    <label id="input-label" class="sr-only">Input a number</label>
     <div
       class="flex flex-col lg:flex-row p-4 lg:p-8 max-w-xl mx-auto lg:max-w-full"
     >
@@ -19,103 +24,103 @@
       >
         <tbody>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
           <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
+            <td><input type="text" aria-labelledby="input-label" /></td>
           </tr>
         </tbody>
       </table>
@@ -216,8 +221,12 @@
         </div>
         <div class="mt-4">
           Checkout the
-          <a href="" class="text-blue-600">GitHub repository</a> for source
-          code.
+          <a
+            href="https://github.com/harchcode/simple-sudoku-ts"
+            class="text-blue-600"
+            >GitHub repository</a
+          >
+          for source code.
         </div>
       </div>
     </div>
