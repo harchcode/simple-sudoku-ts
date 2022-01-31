@@ -11,7 +11,7 @@ export function getRandomIntInclusive(min: number, max: number): number {
 }
 
 function getRowIndex(cellIndex: number): number {
-  return cellIndex / 9;
+  return Math.floor(cellIndex / 9);
 }
 
 function getColIndex(cellIndex: number): number {
@@ -61,6 +61,7 @@ function isConflict(
 
     const testCell = board[i];
 
+    if (testCell === 0 || isNaN(testCell)) continue;
     if (cellValue !== testCell) continue;
 
     if (getRowIndex(cellIndex) === getRowIndex(i)) return true;
@@ -105,10 +106,44 @@ function generateTerminalPattern(): number[] {
       }
 
       c -= 1;
+
+      board[c] = 0;
     }
   } while (c < 81);
 
   return board;
+}
+
+function colBlockPropagation(board: number[], index1: number, index2: number) {
+  let id1 = index1 * 3;
+  let id2 = index2 * 3;
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 3; j++) {
+      const tmp = board[id1];
+      board[id1] = board[id2];
+      board[id2] = tmp;
+
+      id1++;
+      id2++;
+    }
+    id1 += 6;
+    id2 += 6;
+  }
+}
+
+function rowBlockPropagation(board: number[], index1: number, index2: number) {
+  let id1 = index1 * 27;
+  let id2 = index2 * 27;
+
+  for (let i = 0; i < 27; i++) {
+    const tmp = board[id1];
+    board[id1] = board[id2];
+    board[id2] = tmp;
+
+    id1++;
+    id2++;
+  }
 }
 
 function getGivenCountAndMaxEmptyFromDifficulty(
@@ -129,13 +164,13 @@ function getGivenCountAndMaxEmptyFromDifficulty(
 }
 
 export function generate(difficulty: Difficulty): number[] {
-  const board = generateTerminalPattern();
+  const givens = generateTerminalPattern();
 
   let currentGivens = 81;
-  const emptyCellsInRow = [];
-  const emptyCellsInColumn = [];
-  const emptyCellsInBlock = [];
-  const cellToDig = [];
+  const emptyCellsInRow: number[] = [];
+  const emptyCellsInColumn: number[] = [];
+  const emptyCellsInBlock: number[] = [];
+  const cellToDig: number[] = [];
 
   const [totalGivens, maxEmpty] =
     getGivenCountAndMaxEmptyFromDifficulty(difficulty);
@@ -164,6 +199,7 @@ export function generate(difficulty: Difficulty): number[] {
       cellToDig.splice(k, 1);
     }
 
+    const tmp = givens[i];
     let unique = true;
 
     const row = getRowIndex(i);
@@ -179,56 +215,58 @@ export function generate(difficulty: Difficulty): number[] {
     }
 
     for (let j = 1; j <= 9; j++) {
-      if (j == board[i]) {
+      if (j === tmp) {
         continue;
       }
 
-      if (isConflict(board, i, j)) {
+      if (isConflict(givens, i, j)) {
         continue;
       }
 
-      board[i] = j;
+      givens[i] = j;
 
-      if (solve(board) !== false) {
+      if (solve(givens)) {
         unique = false;
         break;
       }
     }
 
     if (unique) {
-      board[i] = 0;
+      givens[i] = 0;
       emptyCellsInRow[row] += 1;
       emptyCellsInColumn[col] += 1;
       emptyCellsInBlock[block] += 1;
       currentGivens -= 1;
+    } else {
+      givens[i] = tmp;
     }
   }
 
-  // if (difficulty == "hardest") {
-  //   let id1 = Sudoku.rand(0, 2);
-  //   let id2 = Sudoku.rand(0, 2);
-  //   if (id1 != id2) {
-  //     board.columnBlockPropagation(id1, id2);
-  //   }
+  if (difficulty == Difficulty.HARDEST) {
+    let id1 = getRandomIntInclusive(0, 2);
+    let id2 = getRandomIntInclusive(0, 2);
+    if (id1 != id2) {
+      colBlockPropagation(givens, id1, id2);
+    }
 
-  //   id1 = Sudoku.rand(0, 2);
-  //   id2 = Sudoku.rand(0, 2);
-  //   if (id1 != id2) {
-  //     board.rowBlockPropagation(id1, id2);
-  //   }
-  // }
+    id1 = getRandomIntInclusive(0, 2);
+    id2 = getRandomIntInclusive(0, 2);
+    if (id1 != id2) {
+      rowBlockPropagation(givens, id1, id2);
+    }
+  }
 
-  return board;
+  return givens;
 }
 
-export function solve(board: number[]): number[] | boolean {
-  const solution: number[] = [];
+export function solve(givens: number[]): number[] | false {
+  const solution = [];
 
   const test: number[][] = [];
   let c = 0;
 
   for (let i = 0; i < 81; i++) {
-    solution.push(0);
+    solution.push(givens[i] || 0);
 
     test[i] = [];
     for (let j = 1; j <= 9; j++) {
@@ -237,22 +275,17 @@ export function solve(board: number[]): number[] | boolean {
   }
 
   do {
-    if (board[c] > 0 || board[c] < 10) {
-      solution[c] = board[c];
+    if (givens[c] && givens[c] > 0 && givens[c] < 10) {
       c += 1;
       continue;
     }
 
-    if (test[c].length != 0) {
-      const x = test[c].length - 1;
-      const y = test[c][x];
+    if (test[c].length !== 0) {
+      const y = test[c].pop() || 0;
 
       if (!isConflict(solution, c, y)) {
         solution[c] = y;
-        test[c].pop();
         c += 1;
-      } else {
-        test[c].pop();
       }
     } else {
       for (let i = 1; i <= 9; i++) {
@@ -261,9 +294,11 @@ export function solve(board: number[]): number[] | boolean {
 
       c -= 1;
 
-      while (board[c]) {
+      while (givens[c] && givens[c] > 0 && givens[c] < 10) {
         c -= 1;
       }
+
+      solution[c] = 0;
     }
 
     if (c < 0) {
@@ -290,4 +325,20 @@ export function check(board: number[]): boolean {
   }
 
   return true;
+}
+
+export function checkConflict(board: number[]): boolean {
+  for (let i = 0; i < 81; i++) {
+    const cell = board[i];
+
+    if (!cell || cell < 1 || cell > 9) {
+      continue;
+    } else {
+      if (isConflict(board, i, cell)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }

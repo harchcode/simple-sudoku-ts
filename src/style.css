@@ -35,14 +35,14 @@ table.sudoku-board tbody tr td:nth-child(3n) {
 }
 
 table.sudoku-board tbody tr td input {
-  @apply absolute top-0 left-0 bottom-0 right-0 text-center text-2xl xs:text-4xl text-gray-800 bg-transparent;
+  @apply absolute top-0 left-0 bottom-0 right-0 text-center text-2xl xs:text-4xl text-blue-800 bg-transparent;
   width: 100%;
   height: 100%;
   cursor: pointer;
   caret-color: transparent;
 }
 
-table.sudoku-board tbody tr td input.given {
+table.sudoku-board tbody tr td input[disabled] {
   @apply text-black font-bold;
 }
 
