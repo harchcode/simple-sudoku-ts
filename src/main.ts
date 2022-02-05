@@ -13,34 +13,24 @@ const currentDifficultySpan = document.getElementById(
   "current-difficulty-span"
 );
 
-function onInputKeyDown(e: KeyboardEvent) {
-  const { key } = e;
+function onInput(e: Event) {
+  const target = e.target as HTMLInputElement;
 
-  const input = e.target as HTMLInputElement;
+  if (!target) return;
 
-  if (key === "Backspace" || key === "Delete" || key === " ") {
-    e.preventDefault();
-    input.value = "";
-    return;
-  }
+  const v = target.value[target.value.length - 1];
 
-  const num = Number(key);
-
-  if (isNaN(num) || num <= 0) {
-    e.preventDefault();
-    return;
-  }
-
-  if (num > 0 && num < 10) {
-    e.preventDefault();
-    input.value = key;
+  if (v >= "0" && v <= "9") {
+    target.value = v;
+  } else {
+    target.value = "";
   }
 }
 
 for (let i = 0; i < cellInputs.length; i++) {
   const input = cellInputs[i];
 
-  input.addEventListener("keydown", onInputKeyDown);
+  input.addEventListener("input", onInput);
 }
 
 function drawBoard(board: number[], givens: number[]) {

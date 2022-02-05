@@ -49,3 +49,15 @@ table.sudoku-board tbody tr td input[disabled] {
 table.sudoku-board tbody tr td input:focus {
   @apply outline-0 border-2 border-blue-600;
 }
+
+/* Chrome, Safari, Edge, Opera */
+table.sudoku-board tbody tr td input::-webkit-outer-spin-button,
+table.sudoku-board tbody tr td input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+table.sudoku-board tbody tr td input[type="number"] {
+  -moz-appearance: textfield;
+}
