@@ -16,6 +16,6 @@ module.exports = {
     "no-console": ["error", { allow: ["warn", "error", "info"] }],
     "no-param-reassign": ["error", { props: false }],
     "@typescript-eslint/no-use-before-define": ["error", { functions: false }],
-    "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "el" }]
+    "@typescript-eslint/no-unused-vars": ["error"]
   }
 };
