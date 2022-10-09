@@ -7,6 +7,8 @@ import {
   solve
 } from "./sudoku";
 
+import init, { greet } from "../sudoku-crate/pkg";
+
 const sudokuTable = document.getElementById("sudoku-board") as HTMLTableElement;
 const cellInputs = sudokuTable.getElementsByTagName("input");
 const currentDifficultySpan = document.getElementById(
@@ -66,7 +68,7 @@ function getDifficultyText(difficulty: Difficulty): string {
   }
 }
 
-function init(difficulty?: Difficulty, alert = true) {
+function initSudoku(difficulty?: Difficulty, alert = true) {
   if (alert && !confirm("Your progress will be lost. Are you sure?")) return;
 
   currentGivens = difficulty !== undefined ? generate(difficulty) : [];
@@ -89,27 +91,27 @@ function getBoard(): number[] {
 }
 
 document.getElementById("new-blank-btn")?.addEventListener("click", () => {
-  init();
+  initSudoku();
 });
 
 document.getElementById("new-easiest-btn")?.addEventListener("click", () => {
-  init(Difficulty.EASIEST);
+  initSudoku(Difficulty.EASIEST);
 });
 
 document.getElementById("new-easy-btn")?.addEventListener("click", () => {
-  init(Difficulty.EASY);
+  initSudoku(Difficulty.EASY);
 });
 
 document.getElementById("new-normal-btn")?.addEventListener("click", () => {
-  init(Difficulty.NORMAL);
+  initSudoku(Difficulty.NORMAL);
 });
 
 document.getElementById("new-hard-btn")?.addEventListener("click", () => {
-  init(Difficulty.HARD);
+  initSudoku(Difficulty.HARD);
 });
 
 document.getElementById("new-hardest-btn")?.addEventListener("click", () => {
-  init(Difficulty.HARDEST);
+  initSudoku(Difficulty.HARDEST);
 });
 
 document.getElementById("solve-btn")?.addEventListener("click", () => {
@@ -151,4 +153,14 @@ document.getElementById("check-btn")?.addEventListener("click", () => {
   }
 });
 
-init(getRandomIntInclusive(0, Object.values(Difficulty).length / 2 - 1), false);
+initSudoku(
+  getRandomIntInclusive(0, Object.values(Difficulty).length / 2 - 1),
+  false
+);
+
+async function abc() {
+  await init();
+  greet("hohooho");
+}
+
+abc();
