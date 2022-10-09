@@ -42,5 +42,8 @@
       "path": "dist",
       "limit": "100 kB"
     }
-  ]
+  ],
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
+  }
 }
