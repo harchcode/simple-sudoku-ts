@@ -1,4 +1,4 @@
-import init, { greet } from "../pkg/sudoku_crate";
+import init, { greet } from "../pkg/sudoku";
 import {
   check,
   checkConflict,
