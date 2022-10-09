@@ -9,8 +9,8 @@
     "lint-staged": "lint-staged",
     "size": "size-limit",
     "vite-dev": "vite",
-    "wasm": "wasm-pack build ./sudoku-crate --target web",
-    "wasm-watch": "onchange 'sudoku-crate/src/**/*.rs' -- npm run wasm",
+    "wasm": "wasm-pack build --target web",
+    "wasm-watch": "onchange 'rust/**/*.rs' -- npm run wasm",
     "prepare": "husky install"
   },
   "devDependencies": {

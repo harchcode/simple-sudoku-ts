@@ -1,3 +1,4 @@
+import init, { greet } from "../pkg/sudoku_crate";
 import {
   check,
   checkConflict,
@@ -6,8 +7,6 @@ import {
   getRandomIntInclusive,
   solve
 } from "./sudoku";
-
-import init, { greet } from "../sudoku-crate/pkg";
 
 const sudokuTable = document.getElementById("sudoku-board") as HTMLTableElement;
 const cellInputs = sudokuTable.getElementsByTagName("input");
