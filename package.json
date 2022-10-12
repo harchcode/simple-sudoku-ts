@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "npm run wasm && run-p wasm-watch vite-dev",
-    "build": "tsc && vite build",
+    "build": "npm run wasm && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src",
     "lint-staged": "lint-staged",

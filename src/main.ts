@@ -1,12 +1,6 @@
-import init, { greet } from "../pkg/sudoku";
-import {
-  check,
-  checkConflict,
-  Difficulty,
-  generate,
-  getRandomIntInclusive,
-  solve
-} from "./sudoku";
+import init, { Difficulty, Sudoku } from "../pkg/sudoku";
+import wasmUrl from "../pkg/sudoku_bg.wasm?url";
+import { getRandomIntInclusive } from "./sudoku";
 
 const sudokuTable = document.getElementById("sudoku-board") as HTMLTableElement;
 const cellInputs = sudokuTable.getElementsByTagName("input");
@@ -14,27 +8,15 @@ const currentDifficultySpan = document.getElementById(
   "current-difficulty-span"
 );
 
-function onInput(e: Event) {
-  const target = e.target as HTMLInputElement;
+let currentBoard: Sudoku;
+let memory: WebAssembly.Memory;
 
-  if (!target) return;
+function drawBoard() {
+  const boardPtr = currentBoard.get_board();
+  const givensPtr = currentBoard.get_givens();
+  const board = new Uint8Array(memory.buffer, boardPtr, 81);
+  const givens = new Uint8Array(memory.buffer, givensPtr, 81);
 
-  const v = target.value[target.value.length - 1];
-
-  if (v >= "0" && v <= "9") {
-    target.value = v;
-  } else {
-    target.value = "";
-  }
-}
-
-for (let i = 0; i < cellInputs.length; i++) {
-  const input = cellInputs[i];
-
-  input.addEventListener("input", onInput);
-}
-
-function drawBoard(board: number[], givens: number[]) {
   for (let i = 0; i < 81; i++) {
     const input = cellInputs[i];
     const cell = board[i];
@@ -50,29 +32,33 @@ function drawBoard(board: number[], givens: number[]) {
   }
 }
 
-let currentGivens: number[] = [];
-
 function getDifficultyText(difficulty: Difficulty): string {
   switch (difficulty) {
-    case Difficulty.EASIEST:
+    case Difficulty.Easiest:
       return "Easiest";
-    case Difficulty.EASY:
+    case Difficulty.Easy:
       return "Easy";
-    case Difficulty.NORMAL:
+    case Difficulty.Normal:
       return "Normal";
-    case Difficulty.HARD:
+    case Difficulty.Hard:
       return "Hard";
-    case Difficulty.HARDEST:
+    case Difficulty.Hardest:
       return "Hardest";
+    default:
+      return "";
   }
 }
 
 function initSudoku(difficulty?: Difficulty, alert = true) {
   if (alert && !confirm("Your progress will be lost. Are you sure?")) return;
 
-  currentGivens = difficulty !== undefined ? generate(difficulty) : [];
+  if (difficulty !== undefined) {
+    currentBoard.generate(difficulty);
+  } else {
+    currentBoard.reset();
+  }
 
-  drawBoard([], currentGivens);
+  drawBoard();
 
   if (!currentDifficultySpan) return;
 
@@ -80,86 +66,16 @@ function initSudoku(difficulty?: Difficulty, alert = true) {
     difficulty === undefined ? "Blank" : getDifficultyText(difficulty);
 }
 
-function getBoard(): number[] {
-  const board: number[] = [];
+async function main() {
+  const wasm = await init(wasmUrl);
+  memory = wasm.memory;
 
-  for (let i = 0; i < cellInputs.length; i++) {
-    board.push(Number(cellInputs[i].value));
-  }
-  return board;
+  currentBoard = Sudoku.new();
+
+  initSudoku(
+    getRandomIntInclusive(0, Object.values(Difficulty).length / 2 - 1),
+    false
+  );
 }
 
-document.getElementById("new-blank-btn")?.addEventListener("click", () => {
-  initSudoku();
-});
-
-document.getElementById("new-easiest-btn")?.addEventListener("click", () => {
-  initSudoku(Difficulty.EASIEST);
-});
-
-document.getElementById("new-easy-btn")?.addEventListener("click", () => {
-  initSudoku(Difficulty.EASY);
-});
-
-document.getElementById("new-normal-btn")?.addEventListener("click", () => {
-  initSudoku(Difficulty.NORMAL);
-});
-
-document.getElementById("new-hard-btn")?.addEventListener("click", () => {
-  initSudoku(Difficulty.HARD);
-});
-
-document.getElementById("new-hardest-btn")?.addEventListener("click", () => {
-  initSudoku(Difficulty.HARDEST);
-});
-
-document.getElementById("solve-btn")?.addEventListener("click", () => {
-  if (!confirm("Your progress will be overwritten. Are you sure?")) return;
-
-  if (currentGivens.length > 0) {
-    const board = solve(currentGivens);
-
-    if (board) drawBoard(board, currentGivens);
-    else alert("Unsolvable!!");
-  } else {
-    const givens = getBoard();
-
-    if (checkConflict(givens)) {
-      alert("Unsolvable!!");
-      return;
-    }
-
-    const board = solve(givens);
-
-    if (board) {
-      currentGivens = givens;
-      drawBoard(board, currentGivens);
-    } else alert("Unsolvable!!");
-  }
-});
-
-document.getElementById("clear-btn")?.addEventListener("click", () => {
-  if (!confirm("The board will be reset. Are you sure?")) return;
-
-  drawBoard([], currentGivens);
-});
-
-document.getElementById("check-btn")?.addEventListener("click", () => {
-  if (check(getBoard())) {
-    alert("Congratulation! You completed the puzzle!");
-  } else {
-    alert("The puzzle is incomplete or has conflicts");
-  }
-});
-
-initSudoku(
-  getRandomIntInclusive(0, Object.values(Difficulty).length / 2 - 1),
-  false
-);
-
-async function abc() {
-  await init();
-  greet("hohooho");
-}
-
-abc();
+main();
