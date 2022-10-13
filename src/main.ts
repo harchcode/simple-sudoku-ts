@@ -115,17 +115,27 @@ function handleCheck() {
   }
 }
 
+function enableAllInputs() {
+  document.querySelectorAll("input").forEach(el => {
+    el.removeAttribute("readonly");
+  });
+
+  document.querySelectorAll("button").forEach(el => {
+    el.removeAttribute("disabled");
+  });
+}
+
 async function main() {
+  const wasm = await init();
+  memory = wasm.memory;
+
+  sudoku = Sudoku.new();
+
   for (let i = 0; i < cellInputs.length; i++) {
     const input = cellInputs[i];
 
     input.addEventListener("input", onInput);
   }
-
-  const wasm = await init();
-  memory = wasm.memory;
-
-  sudoku = Sudoku.new();
 
   document.getElementById("new-blank-btn")?.addEventListener("click", () => {
     initSudoku();
@@ -159,6 +169,8 @@ async function main() {
     getRandomIntInclusive(0, Object.values(Difficulty).length / 2 - 1),
     false
   );
+
+  enableAllInputs();
 }
 
 main();
