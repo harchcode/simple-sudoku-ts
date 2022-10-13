@@ -3,5 +3,9 @@ node_modules
 dist
 dist-ssr
 *.local
-target/
+/target
+**/*.rs.bk
+Cargo.lock
+bin/
 pkg/
+wasm-pack.log
