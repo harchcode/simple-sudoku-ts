@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "npm run wasm && run-p wasm-watch vite-dev",
-    "build": "npm run wasm && tsc && vite build",
+    "build": "npm run wasm && npm run wasm-opt && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src",
     "lint-staged": "lint-staged",
@@ -11,6 +11,7 @@
     "vite-dev": "vite",
     "wasm": "rm -rf pkg && wasm-pack build --target web",
     "wasm-watch": "onchange 'rust/**/*.rs' 'Cargo.toml' -- npm run wasm",
+    "wasm-opt": "wasm-opt -Oz ./pkg/sudoku_bg.wasm -o ./pkg/sudoku_bg.wasm",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -31,7 +32,9 @@
     "tailwindcss": "^3.1.8",
     "typescript": "^4.8.4",
     "vite": "^3.1.6",
-    "vite-plugin-minify": "^1.5.2"
+    "vite-plugin-minify": "^1.5.2",
+    "wasm-opt": "^1.3.0",
+    "wasm-pack": "^0.10.3"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
