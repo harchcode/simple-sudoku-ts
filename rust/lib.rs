@@ -1,12 +1,6 @@
 use std::array::from_fn;
 use wasm_bindgen::prelude::*;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
@@ -120,7 +114,7 @@ fn generate_terminal_pattern(board: &mut [u8; 81]) {
     let mut s: [usize; 81] = [9; 81];
     let mut c: usize = 0;
 
-    loop {
+    while c < 81 {
         if s[c] > 0 {
             let x = rand_int(0, s[c]);
             let y = test[c][x];
@@ -139,10 +133,6 @@ fn generate_terminal_pattern(board: &mut [u8; 81]) {
             s[c] = 9;
             c -= 1;
             board[c] = 0;
-        }
-
-        if c >= 81 {
-            break;
         }
     }
 }
@@ -190,7 +180,7 @@ fn get_given_count_and_max_empty_from_difficulty(difficulty: Difficulty) -> (usi
     }
 }
 
-fn solvepv(givens: &[u8; 81], solution: &mut [u8; 81]) -> bool {
+fn solve(givens: &[u8; 81], solution: &mut [u8; 81]) -> bool {
     let mut test: [[u8; 9]; 81] = [from_fn(|i| (i + 1) as u8); 81];
 
     let mut s: [usize; 81] = [9; 81];
@@ -200,13 +190,9 @@ fn solvepv(givens: &[u8; 81], solution: &mut [u8; 81]) -> bool {
         solution[i] = givens[i];
     }
 
-    loop {
+    while c < 81 {
         if givens[c] > 0 && givens[c] < 10 {
             c += 1;
-
-            if c >= 81 {
-                break;
-            }
 
             continue;
         }
@@ -239,16 +225,12 @@ fn solvepv(givens: &[u8; 81], solution: &mut [u8; 81]) -> bool {
 
             solution[c] = 0;
         }
-
-        if c >= 81 {
-            break;
-        }
     }
 
     return true;
 }
 
-pub fn generate(difficulty: Difficulty, givens: &mut [u8; 81]) {
+fn generate(difficulty: Difficulty, givens: &mut [u8; 81]) {
     let mut solutions: [u8; 81] = [0; 81];
 
     generate_terminal_pattern(givens);
@@ -304,7 +286,7 @@ pub fn generate(difficulty: Difficulty, givens: &mut [u8; 81]) {
             givens[i] = j;
 
             // solutions = [0; 81];
-            if solvepv(&givens, &mut solutions) {
+            if solve(&givens, &mut solutions) {
                 unique = false;
                 break;
             }
@@ -338,6 +320,29 @@ pub fn generate(difficulty: Difficulty, givens: &mut [u8; 81]) {
     }
 }
 
+fn check_conflict(board: &[u8; 81]) -> bool {
+    for i in 0..81 {
+        let cell = board[i];
+
+        if cell < 1 || cell > 9 {
+            continue;
+        } else if is_conflict(board, i, cell) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+fn is_empty(board: &[u8; 81]) -> bool {
+    for i in 0..81 {
+        if board[i] > 0 && board[i] < 10 {
+            return false;
+        }
+    }
+
+    return true;
+}
 #[wasm_bindgen]
 pub struct Sudoku {
     board: [u8; 81],
@@ -367,11 +372,73 @@ impl Sudoku {
     }
 
     pub fn generate(&mut self, difficulty: Difficulty) {
-        self.reset();
+        self.board = [0; 81];
+        self.givens = [0; 81];
+
         generate(difficulty, &mut self.givens);
-        self.board = self.givens.clone();
+
+        self.board = self.givens;
 
         // log(&format!("board: {:?}", self.board));
         // log(&format!("givens: {:?}", self.givens));
+    }
+
+    pub fn clear(&mut self) {
+        self.board = self.givens;
+    }
+
+    pub fn check(&mut self) -> bool {
+        for i in 0..81 {
+            let cell = self.board[i];
+
+            if cell < 1 || cell > 9 {
+                return false;
+            } else if is_conflict(&self.board, i, cell) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    pub fn set_value(&mut self, index: usize, value: u8) {
+        self.board[index] = value;
+    }
+
+    pub fn solve(&mut self) -> bool {
+        let is_board_empty = is_empty(&self.board);
+        let is_givens_empty = is_empty(&self.givens);
+
+        if is_givens_empty {
+            if check_conflict(&self.board) {
+                return false;
+            }
+
+            let mut solution: [u8; 81] = [0; 81];
+            let r = solve(&self.board, &mut solution);
+
+            if !r {
+                return false;
+            }
+
+            if !is_board_empty {
+                self.givens = self.board;
+            }
+
+            self.board = solution;
+
+            return true;
+        } else {
+            let mut solution: [u8; 81] = [0; 81];
+            let r = solve(&self.givens, &mut solution);
+
+            if !r {
+                return false;
+            }
+
+            self.board = solution;
+
+            return true;
+        }
     }
 }

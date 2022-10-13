@@ -1,5 +1,4 @@
 import init, { Difficulty, Sudoku } from "../pkg/sudoku";
-import wasmUrl from "../pkg/sudoku_bg.wasm?url";
 import { getRandomIntInclusive } from "./sudoku";
 
 const sudokuTable = document.getElementById("sudoku-board") as HTMLTableElement;
@@ -8,12 +7,26 @@ const currentDifficultySpan = document.getElementById(
   "current-difficulty-span"
 );
 
-let currentBoard: Sudoku;
+function onInput(e: Event) {
+  const target = e.target as HTMLInputElement;
+
+  if (!target) return;
+
+  const v = target.value[target.value.length - 1];
+
+  if (v >= "0" && v <= "9") {
+    target.value = v;
+  } else {
+    target.value = "";
+  }
+}
+
+let sudoku: Sudoku;
 let memory: WebAssembly.Memory;
 
 function drawBoard() {
-  const boardPtr = currentBoard.get_board();
-  const givensPtr = currentBoard.get_givens();
+  const boardPtr = sudoku.get_board();
+  const givensPtr = sudoku.get_givens();
   const board = new Uint8Array(memory.buffer, boardPtr, 81);
   const givens = new Uint8Array(memory.buffer, givensPtr, 81);
 
@@ -29,6 +42,12 @@ function drawBoard() {
       input.value = cell && cell > 0 && cell < 10 ? cell.toString() : "";
       input.disabled = false;
     }
+  }
+}
+
+function updateBoardFromUI() {
+  for (let i = 0; i < cellInputs.length; i++) {
+    sudoku.set_value(i, Number(cellInputs[i].value));
   }
 }
 
@@ -53,9 +72,9 @@ function initSudoku(difficulty?: Difficulty, alert = true) {
   if (alert && !confirm("Your progress will be lost. Are you sure?")) return;
 
   if (difficulty !== undefined) {
-    currentBoard.generate(difficulty);
+    sudoku.generate(difficulty);
   } else {
-    currentBoard.reset();
+    sudoku.reset();
   }
 
   drawBoard();
@@ -66,11 +85,75 @@ function initSudoku(difficulty?: Difficulty, alert = true) {
     difficulty === undefined ? "Blank" : getDifficultyText(difficulty);
 }
 
+function handleSolve() {
+  if (!confirm("Your progress will be overwritten. Are you sure?")) return;
+
+  updateBoardFromUI();
+
+  if (!sudoku.solve()) {
+    alert("Unsolvable!");
+  }
+
+  drawBoard();
+}
+
+function handleClear() {
+  if (!confirm("The board will be reset. Are you sure?")) return;
+
+  sudoku.clear();
+
+  drawBoard();
+}
+
+function handleCheck() {
+  updateBoardFromUI();
+
+  if (sudoku.check()) {
+    alert("Congratulation! You completed the puzzle!");
+  } else {
+    alert("The puzzle is incomplete or has conflicts");
+  }
+}
+
 async function main() {
-  const wasm = await init(wasmUrl);
+  for (let i = 0; i < cellInputs.length; i++) {
+    const input = cellInputs[i];
+
+    input.addEventListener("input", onInput);
+  }
+
+  const wasm = await init();
   memory = wasm.memory;
 
-  currentBoard = Sudoku.new();
+  sudoku = Sudoku.new();
+
+  document.getElementById("new-blank-btn")?.addEventListener("click", () => {
+    initSudoku();
+  });
+
+  document.getElementById("new-easiest-btn")?.addEventListener("click", () => {
+    initSudoku(Difficulty.Easiest);
+  });
+
+  document.getElementById("new-easy-btn")?.addEventListener("click", () => {
+    initSudoku(Difficulty.Easy);
+  });
+
+  document.getElementById("new-normal-btn")?.addEventListener("click", () => {
+    initSudoku(Difficulty.Normal);
+  });
+
+  document.getElementById("new-hard-btn")?.addEventListener("click", () => {
+    initSudoku(Difficulty.Hard);
+  });
+
+  document.getElementById("new-hardest-btn")?.addEventListener("click", () => {
+    initSudoku(Difficulty.Hardest);
+  });
+
+  document.getElementById("solve-btn")?.addEventListener("click", handleSolve);
+  document.getElementById("check-btn")?.addEventListener("click", handleCheck);
+  document.getElementById("clear-btn")?.addEventListener("click", handleClear);
 
   initSudoku(
     getRandomIntInclusive(0, Object.values(Difficulty).length / 2 - 1),
