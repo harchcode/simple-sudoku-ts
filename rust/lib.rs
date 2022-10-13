@@ -285,7 +285,6 @@ fn generate(difficulty: Difficulty, givens: &mut [u8; 81]) {
 
             givens[i] = j;
 
-            // solutions = [0; 81];
             if solve(&givens, &mut solutions) {
                 unique = false;
                 break;
