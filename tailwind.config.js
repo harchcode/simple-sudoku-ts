@@ -1,8 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme"); // eslint-disable-line
 
 module.exports = {
-  purge: ["./src/**/*.{js,ts}", "./*.html"],
-  darkMode: false, // or 'media' or 'class'
+  content: ["./src/**/*.{js,ts}", "./*.html"],
   theme: {
     extend: {},
     minWidth: {
@@ -12,9 +11,6 @@ module.exports = {
       xs: "480px",
       ...defaultTheme.screens
     }
-  },
-  variants: {
-    extend: {}
   },
   plugins: []
 };
